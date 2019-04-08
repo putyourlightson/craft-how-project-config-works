@@ -36,7 +36,7 @@ As of Craft 3.1, *Project Config* is a thing. Here is a rundown of how it works.
 - Plugin migrations are applied *before* applying all the other `project.yaml` changes, so if you update project config file from a plugin migration, the end result is that Craft thinks that the `project.yaml` file is synced already and the other changes never get applied. A schema version check should to be made against the `project.yaml` file (not the database) to prevent this situation. 
 
   ```
-  if (version_compare($schemaVersion, '<NewSchemaVersion>', '<')) {
+  if (version_compare($schemaVersion, '1.1.0', '<')) {
     // Make the config changes here...
   }
   ```
