@@ -17,7 +17,7 @@ As of Craft 3.1, *Project Config* is a thing. Here is a run down of how it works
 - Enabling `useProjectConfigFile` tells Craft to store project config in a `config/project.yaml` file and use that version as the single source of truth.
 - Craft monitors the `project.yaml` file for changes and if it detects any then syncs them to project config in the database.
 - As a best practice, site schema changes should only be made in the environment in which the `project.yaml` file is version controlled and deployed from.
-- The value stored in the *config* column of the *Info* table is still what is loaded on each regular request.
+- The value stored in the *config* column of the *Info* table is what is loaded on each regular request (for optimisation purposes).
 
 ## Caveats
 
@@ -31,11 +31,9 @@ As of Craft 3.1, *Project Config* is a thing. Here is a run down of how it works
 
 ## Plugin Migrations
 
-- Plugin migrations that update the site schema (including their own settings) should do so using the *Plugins* service or their own service instead of directly in the database.
+- Plugin migrations that update the site schema (including their own settings) should do so using the *Plugins* service or their own services instead of directly in the database.
 
-- All plugins are updated before applying all the other `project.yaml` changes, so if you update project config file from a plugin migration, the end result is that Craft thinks that the `project.yaml` file is synced already, so the other changes never get applied.
-
-- A schema version check should to be made against the `project.yaml` file, not the database, because you're really trying to prevent potentially breaking `project.yaml file`. 
+- Plugin migrations are applied before applying all the other `project.yaml` changes, so if you update project config file from a plugin migration, the end result is that Craft thinks that the `project.yaml` file is synced already, so the other changes never get applied. A schema version check should to be made against the `project.yaml` file (not the database) to prevent potentially breaking the `project.yaml` file. 
 
   ```
   if (version_compare($schemaVersion, '<NewSchemaVersion>', '<')) {
