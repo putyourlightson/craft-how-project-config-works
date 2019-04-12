@@ -1,6 +1,6 @@
-# How Project Config Works
+# How Project Config Works in Craft CMS
 
-As of Craft 3.1, *Project Config* is a thing. Here is a rundown of how it works.
+As of [Craft](https://craftcms.com/) 3.1, *Project Config* is a thing. Here is a rundown of how it works.
 
 > *Compiled by Ben Croker of [PutYourLightsOn](https://putyourlightson.com/).*
 
