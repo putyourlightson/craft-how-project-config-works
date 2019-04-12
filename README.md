@@ -27,13 +27,13 @@ As of Craft 3.1, *Project Config* is a thing. Here is a rundown of how it works.
 ## Plugins
 
 - Plugins that manipulate the site schema should do so using service APIs or the *ProjectConfig* service instead of directly in the database.
-- Plugins that store references to site schema components in project config should store the UIDs (universally unique identifiers) instead of the IDs of those components.
+- Plugins that store references to site schema components in project config should store the UIDs (universally unique identifiers) instead of the IDs of those components, as IDs may be different across environments but UIDs will not.
 
 ## Plugin Migrations
 
 - Plugin migrations that update the site schema (including their own settings) should do so using the *Plugins* service or their own services instead of directly in the database. These updates will be carried over to other environments when `useProjectConfigFile` is set to `true`.
 
-- Plugin migrations are applied *before* applying all the other `project.yaml` changes, so if you update project config file from a plugin migration, the end result is that Craft thinks that the `project.yaml` file is synced already and the other changes never get applied. A schema version check should to be made against the `project.yaml` file (not the database) to prevent this situation. 
+- Plugin migrations are applied *before* applying all the other `project.yaml` changes, so if you update project config file from a plugin migration, the end result is that Craft thinks that the `project.yaml` file is synced already and the other changes never get applied. It may also result in an exception being thrown if `allowAdminChanges` is set to `false` in the environment in which the migration is being run and changes to project config are not allowed. A schema version check should to be made against the `project.yaml` file (not the database) to prevent this situation. 
 
   ```
   if (version_compare($schemaVersion, '1.1.0', '<')) {
@@ -41,7 +41,7 @@ As of Craft 3.1, *Project Config* is a thing. Here is a rundown of how it works.
   }
   ```
 
-- By setting the `muteEvents` flag on the `ProjectConfig` service to `true`, you can prevent changes from `project.yaml` to triggering events. This is useful if you want to modify something in plugin settings, for example. The best way to do it is to set the flag to `true`, make your changes to *both* project config and then database and then (FOR THE LOVE OF GOD) set the flag back to `false`. The reason behind this is if you have a `project.yaml` file with incoming changes in the same git-pull or deploy where a new version of a plugin is coming in that needs to modify its settings, for example.
+- By setting the `muteEvents` flag on the `ProjectConfig` service to `true`, you can prevent changes in `project.yaml` from triggering events. This is useful if you want to modify something complex in plugin settings, for example. The best way to do it is to set the flag to `true`, make your changes to *both* project config and then database and then be sure to set the flag back to `false`. Not doing so will cause any site schema changes in `project.yaml` to be ignored and potentially resulting in things being out of sync.
 
 ## Site Schema
 
