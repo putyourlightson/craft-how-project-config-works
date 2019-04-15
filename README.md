@@ -36,6 +36,9 @@ As of [Craft](https://craftcms.com/) 3.1, *Project Config* is a thing. Here is a
 - Plugin migrations are applied *before* applying all the other `project.yaml` changes, so if you update project config file from a plugin migration, the end result is that Craft thinks that the `project.yaml` file is synced already and the other changes never get applied. It may also result in an exception being thrown if `allowAdminChanges` is set to `false` in the environment in which the migration is being run and changes to project config are not allowed. A schema version check should to be made against the `project.yaml` file (not the database) to prevent this situation. 
 
   ```
+  // Don't make the same config changes twice
+  $schemaVersion = Craft::$app->projectConfig->get('plugins.myPluginHandle.schemaVersion', true);
+        
   if (version_compare($schemaVersion, '1.1.0', '<')) {
     // Make the config changes here...
   }
